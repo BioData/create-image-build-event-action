@@ -61,16 +61,14 @@ create_event() {
 }
 
 main() {
-    local sha, branch
-
     if [[ ${{ github.event_name }} == "pull_request" ]]; then
-      branch=$(echo "${{ github.head_ref }}"
+      branch="${{ github.head_ref }}"
       sha="${{ github.event.pull_request.head.sha }}"
     elif [[ ${{ github.ref_type }} == "branch" ]]; then
-      branch=$(echo "${{ github.ref_name }}"
+      branch="${{ github.ref_name }}"
       sha="${{ github.sha }}"
     elif [[ ${{ github.ref_type }} == "tag" ]]; then
-      branch=$(echo "${{ github.ref_name }}"
+      branch="${{ github.ref_name }}"
       sha="${{ github.sha }}"
     fi
 
