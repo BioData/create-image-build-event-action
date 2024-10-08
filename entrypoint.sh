@@ -36,9 +36,9 @@ create_event() {
        \"reporter\": \"github_actions\",
        \"data\" :{
          \"image\" : \"${IMAGE}\",
-         \"commit_sha\" : \"${GITHUB_SHA}\",
+         \"commit_sha\" : \"$1\",
          \"repository\": \"https://github.com/${GITHUB_REPOSITORY}.git\",
-         \"branch\": \"${GITHUB_REF_NAME}\",
+         \"branch\": \"$2\",
          \"image_sha\": \"${IMAGE_SHA}\",
          \"build_time\" : \"$(date +'%Y-%m-%dT%H:%M:%SZ')\"
        }
@@ -61,9 +61,22 @@ create_event() {
 }
 
 main() {
+    local sha, branch
+
+    if [[ ${{ github.event_name }} == "pull_request" ]]; then
+      branch=$(echo "${{ github.head_ref }}"
+      sha="${{ github.event.pull_request.head.sha }}"
+    elif [[ ${{ github.ref_type }} == "branch" ]]; then
+      branch=$(echo "${{ github.ref_name }}"
+      sha="${{ github.sha }}"
+    elif [[ ${{ github.ref_type }} == "tag" ]]; then
+      branch=$(echo "${{ github.ref_name }}"
+      sha="${{ github.sha }}"
+    fi
+
     validate_inputs
     get_access_token
-    create_event
+    create_event "$sha" "$branch"
 }
 
 main
